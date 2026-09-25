@@ -1,0 +1,38 @@
+:root {
+  --font: "Inter", system-ui, -apple-system, sans-serif;
+  --bg-page: #f6f7fb;
+  --bg-sidebar: #ffffff;
+  --bg-topbar: #ffffff;
+  --bg-card: #ffffff;
+  --bg-muted: #f3f4f6;
+  --bg-search: #f4f5f7;
+  --text: #111827;
+  --text-secondary: #6b7280;
+  --text-muted: #9ca3af;
+  --primary: #166534;
+  --primary-hover: #14532d;
+  --primary-soft: #f0fdf4;
+  --primary-ink: #14532d;
+  --menu-hover: #f3f4f6;
+  --menu-selected: #ecfdf3;
+  --orange: #f97316;
+  --orange-soft: #fff7ed;
+  --purple: #8b5cf6;
+  --purple-soft: #f3e8ff;
+  --rose: #f43f5e;
+  --rose-soft: #ffe4e6;
+  --blue: #3b82f6;
+  --blue-soft: #eff6ff;
+  --amber: #f59e0b;
+  --amber-soft: #fffbeb;
+  --dark: #0b1220;
+  --border: #eef0f4;
+  --shadow-card: 0 10px 28px rgba(15, 23, 42, 0.045);
+  --shadow-float: 0 16px 40px rgba(15, 23, 42, 0.1);
+  --radius-card: 18px;
+  --radius-btn: 12px;
+  --radius-pill: 999px;
+  --sidebar-w: 248px;
+  --topbar-h: 76px;
+  --focus: 0 0 0 3px rgba(20, 83, 45, 0.22);
+}
