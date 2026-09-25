@@ -19,6 +19,8 @@ const UsersWorkspace = lazy(() => import('@/features/pages/UsersWorkspace').then
 const SalesWorkspace = lazy(() => import('@/features/pages/SalesWorkspace').then((m) => ({ default: m.SalesWorkspace })))
 const PayrollWorkspace = lazy(() => import('@/features/pages/PayrollWorkspace').then((m) => ({ default: m.PayrollWorkspace })))
 const SettingsWorkspace = lazy(() => import('@/features/pages/SettingsWorkspace').then((m) => ({ default: m.SettingsWorkspace })))
+const ProfileWorkspace = lazy(() => import('@/features/pages/ProfileWorkspace').then((m) => ({ default: m.ProfileWorkspace })))
+const PasswordWorkspace = lazy(() => import('@/features/pages/PasswordWorkspace').then((m) => ({ default: m.PasswordWorkspace })))
 const AuditWorkspace = lazy(() => import('@/features/pages/AuditWorkspace').then((m) => ({ default: m.AuditWorkspace })))
 const DesignationsWorkspace = lazy(() => import('@/features/pages/DesignationsWorkspace').then((m) => ({ default: m.DesignationsWorkspace })))
 const PlansWorkspace = lazy(() => import('@/features/pages/PlansWorkspace').then((m) => ({ default: m.PlansWorkspace })))
@@ -53,6 +55,8 @@ function roleBlock(path: string, role: Role, dashboard: ReactNode) {
         <Route path="incentives" element={<Boot><IncentivesPage /></Boot>} />
         <Route path="approvals" element={<Boot><IncentivesPage mode="queue" /></Boot>} />
         <Route path="payroll" element={<Boot><PayrollWorkspace /></Boot>} />
+        <Route path="profile" element={<Boot><ProfileWorkspace /></Boot>} />
+        <Route path="change-password" element={<Boot><PasswordWorkspace /></Boot>} />
         <Route path="settings" element={<Boot><SettingsWorkspace /></Boot>} />
         <Route path="audit" element={<Boot><AuditWorkspace /></Boot>} />
         <Route path="reports" element={<Boot><ReportsHub /></Boot>} />

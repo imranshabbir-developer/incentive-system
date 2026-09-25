@@ -231,19 +231,38 @@ input[type='file'] {
   z-index: 20;
 }
 
-.panel button.panel-item {
+.panel .panel-item {
   width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
   text-align: left;
   border: 0;
   background: #fff;
   color: var(--text);
   border-radius: 10px;
   padding: 10px;
+  font-size: 13px;
 }
 
-.panel button.panel-item:hover {
+.panel .panel-item:hover {
   background: var(--menu-hover);
   color: var(--text);
+}
+
+.panel .panel-item.active {
+  background: var(--menu-selected);
+  color: var(--primary-ink);
+}
+
+.account-menu {
+  width: 220px;
+}
+
+.account-menu hr {
+  border: 0;
+  border-top: 1px solid var(--border);
+  margin: 6px 4px;
 }
 
 .search-results {
@@ -667,10 +686,24 @@ input[type='file'] {
   color: var(--text-secondary);
 }
 
+.user-chip {
+  text-align: left;
+}
+
+.user-chip .chevron {
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.user-chip.open,
 .icon-chip:hover,
 .user-chip:hover {
   background: var(--menu-hover);
   color: var(--text);
+}
+
+.user-chip.open .chevron {
+  color: var(--primary-ink);
 }
 
 .avatar {
@@ -694,20 +727,29 @@ input[type='file'] {
   overflow: hidden;
 }
 
+.hero-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
 .hero h2 {
-  margin: 0 0 2px;
-  max-width: 640px;
+  margin: 0;
+  max-width: none;
+  flex: 1;
   font-size: 16px;
   line-height: 1.25;
 }
 
 .hero p {
-  margin: 0;
+  margin: 4px 0 0;
   font-size: 12px;
 }
 
 .hero .ui-btn {
-  margin-top: 8px;
+  margin-top: 0;
+  flex-shrink: 0;
   padding: 7px 12px;
   font-size: 12px;
 }

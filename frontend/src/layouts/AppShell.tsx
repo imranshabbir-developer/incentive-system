@@ -18,6 +18,8 @@ const titles: Record<string, string> = {
   reports: 'Reports',
   settings: 'Settings',
   audit: 'Audit',
+  profile: 'Profile',
+  'change-password': 'Change Password',
 }
 
 export function AppShell() {

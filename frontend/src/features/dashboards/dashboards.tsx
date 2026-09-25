@@ -35,11 +35,11 @@ function usePrefix() {
 function Hero({ title, text, to, action }: { title: string; text: string; to?: string; action?: string }) {
   return (
     <div className="hero">
-      <h2>{title}</h2>
+      <div className="hero-row">
+        <h2>{title}</h2>
+        {to ? <Link className="ui-btn ui-btn-primary" to={to}>{action}</Link> : null}
+      </div>
       <p className="muted">{text}</p>
-      {to ? (
-        <Link className="ui-btn ui-btn-primary" to={to}>{action}</Link>
-      ) : null}
     </div>
   )
 }
