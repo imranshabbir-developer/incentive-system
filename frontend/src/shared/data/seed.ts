@@ -49,6 +49,12 @@ export function periodOptions() {
   return PERIODS.map((value) => ({ value, label: value }))
 }
 
+export const ALL_OPTION = { value: 'All', label: 'All' }
+
+export function choiceOptions(values: Iterable<string>) {
+  return [ALL_OPTION, ...[...new Set(values)].filter(Boolean).map((value) => ({ value, label: value }))]
+}
+
 export const sales = [
   { id: 'SALE-2045', date: '2026-09-15', client: 'Vincent Logozzo', company: 'De Colores Industrial LLC', project: 'RFAB Weather Hardening', service: 'Shop Drawings', saleType: 'New Client', location: 'Texas', currency: 'USD', contract: 4650, invoice: 4650, collected: 2775, net: 2680.64, status: 'Verified', department: 'Construction Estimation', tax: 80, other: 14.36 },
   { id: 'SALE-2048', date: '2026-09-20', client: 'Marina Cole', company: 'Cole Fabrication', project: 'RFAB Canopy Steel', service: 'Shop Drawings', saleType: 'Existing Client', location: 'Texas', currency: 'USD', contract: 3200, invoice: 3200, collected: 1600, net: 1540, status: 'Verified', department: 'Construction Estimation', tax: 50, other: 10 },

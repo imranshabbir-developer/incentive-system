@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useAuth } from '@/features/auth/auth-context'
 import { useFims } from '@/features/data/fims-store'
-import { departmentOptions } from '@/shared/data/seed'
+import { ALL_OPTION, departmentOptions } from '@/shared/data/seed'
 import { Button } from '@/shared/ui/Button'
 import { Select } from '@/shared/ui/Select'
 import { Card } from '@/shared/ui/Card'
@@ -15,8 +15,10 @@ export function PayrollWorkspace() {
   const { user } = useAuth()
   const { batches, requests, departments, createBatch, finalizeBatch, markBatchPaid } = useFims()
   const [filterDept, setFilterDept] = useState('All')
+  const [batchStatus, setBatchStatus] = useState('All')
   const manager = user?.role === 'FINANCE_MANAGER' || user?.role === 'SUPER_ADMIN'
   const approved = requests.filter((row) => row.status === 'Approved' && (filterDept === 'All' || row.department === filterDept))
+  const shownBatches = batches.filter((row) => batchStatus === 'All' || row.status === batchStatus)
 
   return (
     <div className="page-grid">
@@ -30,8 +32,14 @@ export function PayrollWorkspace() {
           </div>
         }
       />
-      <Select label="Department" value={filterDept} options={departmentOptions(departments, { value: 'All', label: 'All departments' })} onChange={setFilterDept} />
-      <Card title="Approved and waiting for a batch">
+      <Card
+        title="Approved and waiting for a batch"
+        action={
+          <div className="filter-row">
+            <Select label="Department" value={filterDept} options={departmentOptions(departments, ALL_OPTION)} onChange={setFilterDept} />
+          </div>
+        }
+      >
         <DataTable
           rows={approved}
           rowKey={(row) => row.id}
@@ -43,9 +51,16 @@ export function PayrollWorkspace() {
           ]}
         />
       </Card>
-      <Card title="Batches">
+      <Card
+        title="Batches"
+        action={
+          <div className="filter-row">
+            <Select label="Batch status" value={batchStatus} options={[ALL_OPTION, { value: 'Open', label: 'Open' }, { value: 'Finalized', label: 'Finalized' }, { value: 'Paid', label: 'Paid' }]} onChange={setBatchStatus} />
+          </div>
+        }
+      >
         <DataTable
-          rows={batches}
+          rows={shownBatches}
           rowKey={(row) => row.id}
           columns={[
             { key: 'id', label: 'Batch' },

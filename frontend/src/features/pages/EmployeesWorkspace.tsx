@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useAuth } from '@/features/auth/auth-context'
 import { useFims, type Employee } from '@/features/data/fims-store'
+import { ALL_OPTION, choiceOptions, departmentOptions, EMPLOYEE_STATUSES, LOCATIONS, SHIFTS } from '@/shared/data/seed'
 import { Select } from '@/shared/ui/Select'
 import { Button } from '@/shared/ui/Button'
 import { Card } from '@/shared/ui/Card'
@@ -9,7 +10,6 @@ import { DataTable } from '@/shared/ui/DataTable'
 import { Modal } from '@/shared/ui/Modal'
 import { PageHeader } from '@/shared/ui/PageHeader'
 import { StatusBadge } from '@/shared/ui/StatusBadge'
-import { departmentOptions, EMPLOYEE_STATUSES, LOCATIONS, SHIFTS } from '@/shared/data/seed'
 import { downloadCsv } from '@/shared/utils/csv'
 
 const blank = (): Employee => ({
@@ -26,9 +26,17 @@ export function EmployeesWorkspace() {
   const [form, setForm] = useState<Employee>(profile ?? blank())
   const [open, setOpen] = useState(params.get('new') === '1' || !!profile)
   const [filterDept, setFilterDept] = useState('All')
+  const [filterStatus, setFilterStatus] = useState('All')
+  const [filterEligible, setFilterEligible] = useState('All')
+  const [filterHod, setFilterHod] = useState('All')
   const rows = useMemo(
-    () => (filterDept === 'All' ? employees : employees.filter((row) => row.department === filterDept)),
-    [employees, filterDept],
+    () => employees.filter((row) =>
+      (filterDept === 'All' || row.department === filterDept)
+      && (filterStatus === 'All' || row.status === filterStatus)
+      && (filterEligible === 'All' || row.eligible === filterEligible)
+      && (filterHod === 'All' || row.hod === filterHod),
+    ),
+    [employees, filterDept, filterEligible, filterHod, filterStatus],
   )
 
   function openForm(row?: Employee) {
@@ -48,13 +56,22 @@ export function EmployeesWorkspace() {
           </div>
         }
       />
-      <Select
-        label="Department"
-        value={filterDept}
-        options={departmentOptions(departments, { value: 'All', label: 'All departments' })}
-        onChange={setFilterDept}
-      />
-      <Card>
+      <Card
+        title="Employees"
+        action={
+          <div className="filter-row">
+            <Select
+              label="Department"
+              value={filterDept}
+              options={departmentOptions(departments, { value: 'All', label: 'All departments' })}
+              onChange={setFilterDept}
+            />
+            <Select label="Status" value={filterStatus} options={choiceOptions(EMPLOYEE_STATUSES)} onChange={setFilterStatus} />
+            <Select label="Eligible" value={filterEligible} options={[ALL_OPTION, { value: 'Yes', label: 'Yes' }, { value: 'No', label: 'No' }]} onChange={setFilterEligible} />
+            <Select label="HOD" value={filterHod} options={choiceOptions(employees.map((row) => row.hod))} onChange={setFilterHod} />
+          </div>
+        }
+      >
         <DataTable
           rows={rows}
           rowKey={(row) => row.id}

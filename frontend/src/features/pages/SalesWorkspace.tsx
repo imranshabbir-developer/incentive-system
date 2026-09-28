@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useAuth } from '@/features/auth/auth-context'
 import { useFims, type Payment, type Sale } from '@/features/data/fims-store'
-import { CURRENCIES, departmentOptions, LOCATIONS, PAYMENT_METHODS, PAYMENT_STATUSES } from '@/shared/data/seed'
+import { ALL_OPTION, choiceOptions, CURRENCIES, departmentOptions, LOCATIONS, PAYMENT_METHODS, PAYMENT_STATUSES } from '@/shared/data/seed'
 import { Select } from '@/shared/ui/Select'
 import { Button } from '@/shared/ui/Button'
 import { Card } from '@/shared/ui/Card'
@@ -27,11 +27,24 @@ export function SalesWorkspace() {
     saleType: 'New Client', location: '', currency: 'USD', contract: 0, invoice: 0, collected: 0, net: 0, status: 'Pending', department: 'Construction Estimation', tax: 0, other: 0,
   })
   const [filterDept, setFilterDept] = useState('All')
+  const [filterSaleStatus, setFilterSaleStatus] = useState('All')
+  const [filterSaleType, setFilterSaleType] = useState('All')
+  const [filterPayStatus, setFilterPayStatus] = useState('All')
+  const [filterPayMethod, setFilterPayMethod] = useState('All')
   const [seller, setSeller] = useState('EMP-1001')
   const [closer, setCloser] = useState('EMP-1002')
   const [manager, setManager] = useState('EMP-1002')
-  const shownSales = filterDept === 'All' ? sales : sales.filter((row) => row.department === filterDept)
-  const shownPays = filterDept === 'All' ? payments : payments.filter((row) => shownSales.some((sale) => sale.id === row.saleId))
+  const shownSales = sales.filter((row) =>
+    (filterDept === 'All' || row.department === filterDept)
+    && (filterSaleStatus === 'All' || row.status === filterSaleStatus)
+    && (filterSaleType === 'All' || row.saleType === filterSaleType),
+  )
+  const shownPays = payments.filter((row) => {
+    if (filterDept !== 'All' && !shownSales.some((item) => item.id === row.saleId)) return false
+    if (filterPayStatus !== 'All' && row.status !== filterPayStatus) return false
+    if (filterPayMethod !== 'All' && row.method !== filterPayMethod) return false
+    return true
+  })
   const teamPool = employees.filter((row) => row.status === 'Active' && (row.department === sale.department || !sale.department))
   const [payment, setPayment] = useState<Payment>({ id: '', saleId: '', amount: 0, date: '2026-09-25', method: 'Zelle', status: 'Received', fee: 0, net: 0, reference: '' })
 
@@ -65,8 +78,16 @@ export function SalesWorkspace() {
       />
       {monthLocked ? <p className="delta-down">September is locked. Reopen it in Settings before editing collections.</p> : null}
       {error ? <p className="delta-down">{error}</p> : null}
-      <Select label="Department" value={filterDept} options={departmentOptions(departments, { value: 'All', label: 'All departments' })} onChange={setFilterDept} />
-      <Card title="Sales">
+      <Card
+        title="Sales"
+        action={
+          <div className="filter-row">
+            <Select label="Department" value={filterDept} options={departmentOptions(departments, ALL_OPTION)} onChange={setFilterDept} />
+            <Select label="Sale status" value={filterSaleStatus} options={choiceOptions(sales.map((row) => row.status))} onChange={setFilterSaleStatus} />
+            <Select label="Sale type" value={filterSaleType} options={choiceOptions(sales.map((row) => row.saleType))} onChange={setFilterSaleType} />
+          </div>
+        }
+      >
         <DataTable
           rows={shownSales}
           rowKey={(row) => row.id}
@@ -83,7 +104,15 @@ export function SalesWorkspace() {
           ]}
         />
       </Card>
-      <Card title="Collection payments">
+      <Card
+        title="Collection payments"
+        action={
+          <div className="filter-row">
+            <Select label="Payment status" value={filterPayStatus} options={choiceOptions(PAYMENT_STATUSES)} onChange={setFilterPayStatus} />
+            <Select label="Payment method" value={filterPayMethod} options={choiceOptions(PAYMENT_METHODS)} onChange={setFilterPayMethod} />
+          </div>
+        }
+      >
         <DataTable
           rows={shownPays}
           rowKey={(row) => row.id}

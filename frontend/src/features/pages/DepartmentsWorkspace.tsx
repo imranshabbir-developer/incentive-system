@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useAuth } from '@/features/auth/auth-context'
 import { useFims, type Department } from '@/features/data/fims-store'
 import { Select } from '@/shared/ui/Select'
@@ -8,6 +8,7 @@ import { DataTable } from '@/shared/ui/DataTable'
 import { Modal } from '@/shared/ui/Modal'
 import { PageHeader } from '@/shared/ui/PageHeader'
 import { StatusBadge } from '@/shared/ui/StatusBadge'
+import { choiceOptions } from '@/shared/data/seed'
 import { downloadCsv } from '@/shared/utils/csv'
 
 export function DepartmentsWorkspace() {
@@ -16,6 +17,12 @@ export function DepartmentsWorkspace() {
   const canWrite = user?.role === 'SUPER_ADMIN'
   const [open, setOpen] = useState(false)
   const [form, setForm] = useState<Department>(departments[0])
+  const [status, setStatus] = useState('All')
+  const [division, setDivision] = useState('All')
+  const rows = useMemo(
+    () => departments.filter((row) => (status === 'All' || row.status === status) && (division === 'All' || row.division === division)),
+    [departments, division, status],
+  )
 
   return (
     <div className="page-grid">
@@ -25,13 +32,20 @@ export function DepartmentsWorkspace() {
         actions={
           <div className="filter-row">
             {canWrite ? <Button onClick={() => { setForm({ id: `dept-${departments.length + 1}`, code: 'NW', name: '', hod: '', reviewer: '', status: 'Active', division: 'Operations' }); setOpen(true) }}>Add department</Button> : null}
-            <Button variant="ghost" onClick={() => downloadCsv('departments.csv', departments)}>Export to Excel</Button>
+            <Button variant="ghost" onClick={() => downloadCsv('departments.csv', rows)}>Export to Excel</Button>
           </div>
         }
       />
-      <Card>
+      <Card
+        action={
+          <div className="filter-row">
+            <Select label="Status" value={status} options={choiceOptions(departments.map((row) => row.status))} onChange={setStatus} />
+            <Select label="Division" value={division} options={choiceOptions(departments.map((row) => row.division))} onChange={setDivision} />
+          </div>
+        }
+      >
         <DataTable
-          rows={departments}
+          rows={rows}
           rowKey={(row) => row.id}
           columns={[
             { key: 'code', label: 'ID' },

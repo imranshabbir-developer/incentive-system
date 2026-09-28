@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useAuth } from '@/features/auth/auth-context'
 import { useFims, type IncentivePlan } from '@/features/data/fims-store'
 import { Button } from '@/shared/ui/Button'
@@ -7,7 +7,7 @@ import { DataTable } from '@/shared/ui/DataTable'
 import { Modal } from '@/shared/ui/Modal'
 import { PageHeader } from '@/shared/ui/PageHeader'
 import { Select } from '@/shared/ui/Select'
-import { departmentOptions } from '@/shared/data/seed'
+import { ALL_OPTION, departmentOptions } from '@/shared/data/seed'
 import { StatusBadge } from '@/shared/ui/StatusBadge'
 import { downloadCsv } from '@/shared/utils/csv'
 
@@ -32,6 +32,12 @@ export function PlansWorkspace() {
   const canWrite = user?.role === 'SUPER_ADMIN'
   const [open, setOpen] = useState(false)
   const [form, setForm] = useState<IncentivePlan>(blank())
+  const [filterDept, setFilterDept] = useState('All')
+  const [filterStatus, setFilterStatus] = useState('All')
+  const rows = useMemo(
+    () => plans.filter((row) => (filterDept === 'All' || row.department === filterDept) && (filterStatus === 'All' || row.status === filterStatus)),
+    [filterDept, filterStatus, plans],
+  )
 
   return (
     <div className="page-grid">
@@ -41,13 +47,20 @@ export function PlansWorkspace() {
         actions={
           <div className="filter-row">
             {canWrite ? <Button onClick={() => { setForm(blank()); setOpen(true) }}>Add plan</Button> : null}
-            <Button variant="ghost" onClick={() => downloadCsv('plans.csv', plans)}>Export to Excel</Button>
+            <Button variant="ghost" onClick={() => downloadCsv('plans.csv', rows)}>Export to Excel</Button>
           </div>
         }
       />
-      <Card>
+      <Card
+        action={
+          <div className="filter-row">
+            <Select label="Department" value={filterDept} options={departmentOptions(departments, ALL_OPTION)} onChange={setFilterDept} />
+            <Select label="Status" value={filterStatus} options={[ALL_OPTION, { value: 'Draft', label: 'Draft' }, { value: 'Active', label: 'Active' }, { value: 'Inactive', label: 'Inactive' }]} onChange={setFilterStatus} />
+          </div>
+        }
+      >
         <DataTable
-          rows={plans}
+          rows={rows}
           rowKey={(row) => row.id}
           columns={[
             { key: 'name', label: 'Plan name' },

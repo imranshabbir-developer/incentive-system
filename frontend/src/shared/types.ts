@@ -91,3 +91,5 @@ export type ReportId =
   | 'employees-by-status'
   | 'eligibility-list'
   | 'joining-list'
+  | 'user-access'
+  | 'audit-history'

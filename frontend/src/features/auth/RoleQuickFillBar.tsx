@@ -27,10 +27,13 @@ export function RoleQuickFillBar({ activeEmail, onPick }: Props) {
           <button
             key={user.role}
             type="button"
+            data-role={user.role}
             className={`role-chip${activeEmail === user.email ? ' active' : ''}`}
             onClick={() => onPick(user.email, DEMO_PASSWORDS[user.email])}
           >
-            <Icon size={16} />
+            <span className="role-chip-icon">
+              <Icon size={13} />
+            </span>
             <span>{ROLE_LABEL[user.role]}</span>
           </button>
         )

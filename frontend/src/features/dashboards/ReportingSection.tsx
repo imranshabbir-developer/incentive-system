@@ -52,38 +52,38 @@ export function ReportingSection({ extra = [] }: { extra?: Array<{ id: string; l
     <Card
       title="Reporting"
       action={
-        <Button
-          variant="ghost"
-          onClick={() =>
-            downloadCsv(
-              `fims-report-${month}.csv`,
-              user?.role === 'HR'
-                ? people.map((row) => ({ id: row.id, name: row.name, department: row.department, status: row.status, eligible: row.eligible, joining: row.joiningDate }))
-                : rows.map((row) => ({
-                    Month: row.month,
-                    Department: row.department,
-                    Employee: row.employee,
-                    HOD: row.hod,
-                    Status: row.status,
-                    Type: row.type,
-                    Amount: row.amount,
-                  })),
-            )
-          }
-        >
-          Export to Excel
-        </Button>
+        <div className="filter-row">
+          <Select label="Month" value={month} options={periodOptions()} onChange={setMonth} />
+          <Select
+            label="Department"
+            value={department}
+            options={departmentOptions(departments, { value: 'All', label: 'All departments' })}
+            onChange={setDepartment}
+          />
+          <Button
+            variant="ghost"
+            onClick={() =>
+              downloadCsv(
+                `fims-report-${month}.csv`,
+                user?.role === 'HR'
+                  ? people.map((row) => ({ id: row.id, name: row.name, department: row.department, status: row.status, eligible: row.eligible, joining: row.joiningDate }))
+                  : rows.map((row) => ({
+                      Month: row.month,
+                      Department: row.department,
+                      Employee: row.employee,
+                      HOD: row.hod,
+                      Status: row.status,
+                      Type: row.type,
+                      Amount: row.amount,
+                    })),
+              )
+            }
+          >
+            Export to Excel
+          </Button>
+        </div>
       }
     >
-      <div className="filter-row">
-        <Select label="Month" value={month} options={periodOptions()} onChange={setMonth} />
-        <Select
-          label="Department"
-          value={department}
-          options={departmentOptions(departments, { value: 'All', label: 'All departments' })}
-          onChange={setDepartment}
-        />
-      </div>
       <div className="report-grid">
         {reports.map((report) => (
           <Link key={report.id} className="shortcut" to={`/${prefix}/reports/${report.id}`}>

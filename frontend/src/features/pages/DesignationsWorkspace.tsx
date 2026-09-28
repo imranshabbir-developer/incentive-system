@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useAuth } from '@/features/auth/auth-context'
 import { useFims, type Designation } from '@/features/data/fims-store'
 import { Button } from '@/shared/ui/Button'
@@ -8,6 +8,7 @@ import { Modal } from '@/shared/ui/Modal'
 import { PageHeader } from '@/shared/ui/PageHeader'
 import { Select } from '@/shared/ui/Select'
 import { StatusBadge } from '@/shared/ui/StatusBadge'
+import { ALL_OPTION } from '@/shared/data/seed'
 import { downloadCsv } from '@/shared/utils/csv'
 
 export function DesignationsWorkspace() {
@@ -16,6 +17,11 @@ export function DesignationsWorkspace() {
   const canWrite = user?.role === 'SUPER_ADMIN'
   const [open, setOpen] = useState(false)
   const [form, setForm] = useState<Designation>({ id: '', name: '', status: 'Active' })
+  const [status, setStatus] = useState('All')
+  const rows = useMemo(
+    () => designations.filter((row) => status === 'All' || row.status === status),
+    [designations, status],
+  )
 
   return (
     <div className="page-grid">
@@ -25,13 +31,19 @@ export function DesignationsWorkspace() {
         actions={
           <div className="filter-row">
             {canWrite ? <Button onClick={() => { setForm({ id: `des-${Date.now()}`, name: '', status: 'Active' }); setOpen(true) }}>Add designation</Button> : null}
-            <Button variant="ghost" onClick={() => downloadCsv('designations.csv', designations)}>Export to Excel</Button>
+            <Button variant="ghost" onClick={() => downloadCsv('designations.csv', rows)}>Export to Excel</Button>
           </div>
         }
       />
-      <Card>
+      <Card
+        action={
+          <div className="filter-row">
+            <Select label="Status" value={status} options={[ALL_OPTION, { value: 'Active', label: 'Active' }, { value: 'Inactive', label: 'Inactive' }]} onChange={setStatus} />
+          </div>
+        }
+      >
         <DataTable
-          rows={designations}
+          rows={rows}
           rowKey={(row) => row.id}
           columns={[
             { key: 'name', label: 'Designation' },

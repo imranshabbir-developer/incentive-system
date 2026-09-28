@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useAuth } from '@/features/auth/auth-context'
 import { makeUser, useFims, type AppUser } from '@/features/data/fims-store'
 import { ROLE_LABEL } from '@/shared/constants/roles'
@@ -20,6 +20,11 @@ export function UsersWorkspace() {
   const canWrite = user?.role === 'SUPER_ADMIN'
   const [open, setOpen] = useState(false)
   const [form, setForm] = useState<AppUser>(makeUser({ name: '', email: '', role: 'HOD' }))
+  const [filterRole, setFilterRole] = useState('All')
+  const rows = useMemo(
+    () => users.filter((row) => filterRole === 'All' || row.role === filterRole),
+    [filterRole, users],
+  )
 
   return (
     <div className="page-grid">
@@ -29,13 +34,24 @@ export function UsersWorkspace() {
         actions={
           <div className="filter-row">
             {canWrite ? <Button onClick={() => { setForm(makeUser({ name: '', email: '', role: 'HOD' })); setOpen(true) }}>Add user</Button> : null}
-            <Button variant="ghost" onClick={() => downloadCsv('users.csv', users.map((row) => ({ name: row.name, email: row.email, role: ROLE_LABEL[row.role], departments: row.departmentNames.join(', ') || 'All' })))}>Export to Excel</Button>
+            <Button variant="ghost" onClick={() => downloadCsv('users.csv', rows.map((row) => ({ name: row.name, email: row.email, role: ROLE_LABEL[row.role], departments: row.departmentNames.join(', ') || 'All' })))}>Export to Excel</Button>
           </div>
         }
       />
-      <Card>
+      <Card
+        action={
+          <div className="filter-row">
+            <Select
+              label="Role"
+              value={filterRole}
+              options={[{ value: 'All', label: 'All roles' }, ...roles.map((role) => ({ value: role, label: ROLE_LABEL[role] }))]}
+              onChange={setFilterRole}
+            />
+          </div>
+        }
+      >
         <DataTable
-          rows={users}
+          rows={rows}
           rowKey={(row) => row.id}
           columns={[
             { key: 'name', label: 'Name' },
