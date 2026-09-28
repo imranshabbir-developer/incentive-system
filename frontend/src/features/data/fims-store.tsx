@@ -134,6 +134,8 @@ function initial(): State {
     batches: [{ id: 'BATCH-2026-09', month: 'September 2026', total: 250, status: 'Open', requestIds: ['INC-CE-2026-0045'] }],
     notices: [
       { id: 'N-1', title: 'Request submitted', body: 'INC-CE-2026-0045 is with Finance.', to: 'FINANCE', at: '2026-10-01 14:20', read: false },
+      { id: 'N-2', title: 'Request approved', body: 'INC-CE-2026-0045 is Approved for payroll.', to: 'Mark Watson', at: '2026-10-02 11:05', read: false },
+      { id: 'N-3', title: 'Request returned', body: 'INC-CE-2026-0046 was returned to HOD.', to: 'Mark Watson', at: '2026-10-02 16:40', read: false },
     ],
     monthLocked: false,
     designations: [
@@ -246,7 +248,7 @@ export function FimsProvider({ children }: { children: ReactNode }) {
         setState((prev) => {
           const current = prev.requests.find((row) => row.id === id)
           if (!current) return prev
-          const noticeTo = status === 'Returned' ? current.hod : 'HOD'
+          const noticeTo = current.hod
           return commit({
             ...prev,
             requests: prev.requests.map((row) => (row.id === id ? { ...row, status, reason } : row)),

@@ -17,12 +17,14 @@ export function IncentivesPage({ mode = 'all' }: { mode?: 'all' | 'queue' }) {
   const { requests, departments } = useFims()
   const [params, setParams] = useSearchParams()
   const status = params.get('status') ?? ''
-  const department = params.get('department') ?? 'All'
+  const hodScope = user?.role === 'HOD' && user.departmentNames.length ? user.departmentNames : null
+  const department = params.get('department') ?? (hodScope ? hodScope[0] : 'All')
   const hod = params.get('hod') ?? 'All'
   const month = params.get('month') ?? 'All'
   const type = params.get('type') ?? 'All'
   const prefix = ROLE_PREFIX[user!.role]
   const scoped = requests.filter((row) => {
+    if (hodScope && !hodScope.includes(row.department)) return false
     if (department !== 'All' && row.department !== department) return false
     if (hod !== 'All' && row.hod !== hod) return false
     if (month !== 'All' && row.month !== month) return false
@@ -81,7 +83,7 @@ export function IncentivesPage({ mode = 'all' }: { mode?: 'all' | 'queue' }) {
             <Select
               label="Department"
               value={department}
-              options={departmentOptions(departments, { value: 'All', label: 'All departments' })}
+              options={departmentOptions(departments, hodScope ? undefined : { value: 'All', label: 'All departments' }).filter((item) => !hodScope || hodScope.includes(item.value))}
               onChange={(name) => setFilter('department', name)}
             />
             <Select

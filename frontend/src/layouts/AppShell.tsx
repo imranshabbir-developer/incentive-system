@@ -10,12 +10,16 @@ const titles: Record<string, string> = {
   dashboard: 'Dashboard',
   employees: 'Employees',
   departments: 'Departments',
+  designations: 'Designations',
   users: 'Users',
+  plans: 'Incentive Plans',
   sales: 'Sales / Collections',
   incentives: 'Incentive Requests',
   approvals: 'Approvals',
+  'extra-approvals': 'Extra Approvals',
   payroll: 'Payroll',
   reports: 'Reports',
+  notifications: 'Notifications',
   settings: 'Settings',
   audit: 'Audit',
   profile: 'Profile',
@@ -54,6 +58,7 @@ export function AppShell() {
         <main className="app-content">
           <Outlet />
         </main>
+        <footer className="app-footer">IPS-USA · Finance Incentive Management System · No card details are collected</footer>
       </div>
     </div>
   )

@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { useAuth } from '@/features/auth/auth-context'
 import { useFims } from '@/features/data/fims-store'
+import { ROLE_LABEL } from '@/shared/constants/roles'
+import { navFor } from '@/shared/constants/nav'
 import { Button } from '@/shared/ui/Button'
 import { Card } from '@/shared/ui/Card'
 import { Modal } from '@/shared/ui/Modal'
@@ -33,6 +35,35 @@ export function SettingsWorkspace() {
       <Card title="Approval routing">
         <p className="muted">Extra approval by amount or department is off. Do not invent a threshold here. The extra-approval queue stays empty until a later configuration value is provided.</p>
       </Card>
+      {user?.role === 'SUPER_ADMIN' ? (
+        <Card title="Role access matrix">
+          <p className="muted" style={{ marginBottom: 12 }}>Screen allow-list from FR-AUTH-01. Percentages and extra-approval thresholds stay unconfigured.</p>
+          <div className="table-wrap">
+            <table className="data-table">
+              <thead>
+                <tr>
+                  <th>Screen</th>
+                  {(['SUPER_ADMIN', 'HR', 'HOD', 'FINANCE_USER', 'FINANCE_MANAGER', 'EXECUTIVE'] as const).map((role) => (
+                    <th key={role}>{ROLE_LABEL[role]}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {['Dashboard', 'Employees', 'Departments', 'Sales / Collections', 'Incentive Requests', 'Approvals', 'Payroll', 'Reports', 'Settings', 'Audit'].map((screen) => (
+                  <tr key={screen}>
+                    <td>{screen}</td>
+                    {(['SUPER_ADMIN', 'HR', 'HOD', 'FINANCE_USER', 'FINANCE_MANAGER', 'EXECUTIVE'] as const).map((role) => {
+                      const labels = navFor(role, 'x').map((item) => item.label)
+                      const ok = labels.includes(screen) || (screen === 'Dashboard' && labels.includes('Dashboard'))
+                      return <td key={role}>{ok ? 'Yes' : '—'}</td>
+                    })}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </Card>
+      ) : null}
       {open ? (
         <Modal
           title={next ? 'Lock September 2026' : 'Reopen September 2026'}

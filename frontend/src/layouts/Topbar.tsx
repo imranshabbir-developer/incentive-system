@@ -75,11 +75,12 @@ export function Topbar({ title, user, onMenu, onLogout }: Props) {
           {openBell ? (
             <div className="panel">
               {unread.length ? unread.map((row) => (
-                <button key={row.id} type="button" className="panel-item" onClick={() => { markNoticeRead(row.id); navigate(`/${prefix}/incentives`) }}>
+                <button key={row.id} type="button" className="panel-item" onClick={() => { markNoticeRead(row.id); navigate(`/${prefix}/notifications`) }}>
                   <strong>{row.title}</strong>
                   <div className="tiny">{row.body}</div>
                 </button>
               )) : <p className="tiny">No unread notifications</p>}
+              <Link className="panel-item" to={`/${prefix}/notifications`} onClick={() => setOpenBell(false)}>View all notifications</Link>
             </div>
           ) : null}
         </div>

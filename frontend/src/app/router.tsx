@@ -29,6 +29,7 @@ const IncentivesPage = lazy(() => import('@/features/incentives/IncentivesPage')
 const SaleRequestPage = lazy(() => import('@/features/incentives/SaleRequestPage').then((m) => ({ default: m.SaleRequestPage })))
 const ManualRequestPage = lazy(() => import('@/features/incentives/ManualRequestPage').then((m) => ({ default: m.ManualRequestPage })))
 const RequestDetailPage = lazy(() => import('@/features/incentives/RequestDetailPage').then((m) => ({ default: m.RequestDetailPage })))
+const NotificationsWorkspace = lazy(() => import('@/features/pages/NotificationsWorkspace').then((m) => ({ default: m.NotificationsWorkspace })))
 const ReportsHub = lazy(() => import('@/features/reports/ReportsHub').then((m) => ({ default: m.ReportsHub })))
 const ReportPage = lazy(() => import('@/features/reports/ReportPage').then((m) => ({ default: m.ReportPage })))
 
@@ -61,6 +62,7 @@ function roleBlock(path: string, role: Role, dashboard: ReactNode) {
         <Route path="audit" element={<Boot><AuditWorkspace /></Boot>} />
         <Route path="reports" element={<Boot><ReportsHub /></Boot>} />
         <Route path="reports/:reportId" element={<Boot><ReportPage /></Boot>} />
+        <Route path="notifications" element={<Boot><NotificationsWorkspace /></Boot>} />
         <Route index element={<Navigate to="dashboard" replace />} />
         <Route path="*" element={<Navigate to="dashboard" replace />} />
       </Route>

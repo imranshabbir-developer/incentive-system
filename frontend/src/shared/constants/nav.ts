@@ -13,6 +13,7 @@ export type NavKey =
   | 'extra-approvals'
   | 'payroll'
   | 'reports'
+  | 'notifications'
   | 'settings'
   | 'audit'
 
@@ -35,17 +36,18 @@ const all: Record<NavKey, string> = {
   'extra-approvals': 'Extra Approvals',
   payroll: 'Payroll',
   reports: 'Reports',
+  notifications: 'Notifications',
   settings: 'Settings',
   audit: 'Audit',
 }
 
 const byRole: Record<Role, NavKey[]> = {
-  SUPER_ADMIN: ['dashboard', 'users', 'employees', 'departments', 'designations', 'plans', 'sales', 'incentives', 'approvals', 'extra-approvals', 'payroll', 'reports', 'settings', 'audit'],
-  HR: ['dashboard', 'employees', 'reports'],
-  HOD: ['dashboard', 'employees', 'incentives', 'reports'],
-  FINANCE_USER: ['dashboard', 'sales', 'incentives', 'approvals', 'payroll', 'reports'],
-  FINANCE_MANAGER: ['dashboard', 'sales', 'incentives', 'approvals', 'extra-approvals', 'payroll', 'reports', 'settings', 'audit'],
-  EXECUTIVE: ['dashboard', 'approvals', 'extra-approvals', 'reports'],
+  SUPER_ADMIN: ['dashboard', 'users', 'employees', 'departments', 'designations', 'plans', 'sales', 'incentives', 'approvals', 'extra-approvals', 'payroll', 'reports', 'notifications', 'settings', 'audit'],
+  HR: ['dashboard', 'employees', 'departments', 'reports', 'notifications'],
+  HOD: ['dashboard', 'employees', 'incentives', 'reports', 'notifications'],
+  FINANCE_USER: ['dashboard', 'sales', 'incentives', 'approvals', 'payroll', 'reports', 'notifications'],
+  FINANCE_MANAGER: ['dashboard', 'sales', 'incentives', 'approvals', 'extra-approvals', 'payroll', 'reports', 'notifications', 'settings', 'audit'],
+  EXECUTIVE: ['dashboard', 'sales', 'incentives', 'approvals', 'extra-approvals', 'payroll', 'reports', 'notifications'],
 }
 
 export function navFor(role: Role, prefix: string): NavItem[] {

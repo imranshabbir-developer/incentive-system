@@ -25,6 +25,7 @@ import { Card } from '@/shared/ui/Card'
 import { DataTable } from '@/shared/ui/DataTable'
 import { KpiCard } from '@/shared/ui/KpiCard'
 import { StatusBadge } from '@/shared/ui/StatusBadge'
+import { WorkflowRibbon } from '@/shared/ui/WorkflowRibbon'
 
 function usePrefix() {
   const { user } = useAuth()
@@ -67,6 +68,7 @@ export function AdminDashboard() {
   return (
     <div className="page-grid">
       <Hero title="Control users, departments and audit from one place" text="Super Admin workspace for IPS-USA FIMS." to={`/${base}/users`} action="Open users" />
+      <WorkflowRibbon />
       <section className="kpi-grid">
         <KpiCard label="Total users" value={String(users.length)} tone="green" icon={<Users />} spark={spark} />
         <KpiCard label="Departments" value={String(departments.length)} delta={`${departments.filter((row) => row.status === 'Active').length} active`} tone="purple" icon={<Building2 />} spark={spark} />
@@ -151,6 +153,7 @@ export function HrDashboard() {
   return (
     <div className="page-grid">
       <Hero title="Keep the employee master accurate" text="HR maintains people data only. Incentive amounts are not calculated here." to={`/${base}/employees`} action="Open employee master" />
+      <WorkflowRibbon />
       <section className="kpi-grid">
         <KpiCard label="Total employees" value={String(people.length)} tone="green" icon={<Users />} spark={spark} />
         <KpiCard label="Active" value={String(people.filter((row) => row.status === 'Active').length)} tone="blue" icon={<UserCheck />} spark={spark} />
@@ -207,7 +210,8 @@ export function HodDashboard() {
   const team = people.filter((row) => row.department === dept)
   return (
     <div className="page-grid">
-      <Hero title={`Submit September incentives for ${dept}`} text="Pick any IPS-USA department in the list. Collections and employees update to that department." to={`/${base}/incentives/new-sale`} action="New sale-based request" />
+      <Hero title={`Submit September incentives for ${dept}`} text="Collections and employees stay scoped to your authorized department." to={`/${base}/incentives/new-sale`} action="New sale-based request" />
+      <WorkflowRibbon />
       <section className="kpi-grid">
         <KpiCard label="Team members" value={String(team.length)} tone="green" icon={<Users />} spark={spark} />
         <KpiCard label="Eligible collections" value={String(eligible.length)} tone="blue" icon={<CircleDollarSign />} spark={spark} />
@@ -228,7 +232,7 @@ export function HodDashboard() {
         title="Eligible collections"
         action={
           <div className="filter-row">
-            <Select label="Department" value={dept} options={departmentOptions(departments)} onChange={setDept} />
+            <Select label="Department" value={dept} options={departmentOptions(departments).filter((item) => !user?.departmentNames.length || user.departmentNames.includes(item.value))} onChange={setDept} />
             <Select label="Collection status" value={payStatus} options={choiceOptions(eligibleFrom(dept, sales, payments).map((row) => row.pay.status))} onChange={setPayStatus} />
           </div>
         }
@@ -288,6 +292,7 @@ export function FinanceUserDashboard() {
   return (
     <div className="page-grid">
       <Hero title="Verify collections and review HOD requests" text="Finance inbox for IPS-USA incentive control." to={`/${base}/approvals`} action="Open review queue" />
+      <WorkflowRibbon />
       <section className="kpi-grid">
         <KpiCard label="Pending review" value={String(pending)} tone="amber" icon={<ClipboardList />} spark={spark} />
         <KpiCard label="Returned" value={String(countStatus(requests, 'Returned'))} tone="rose" icon={<ClipboardList />} spark={sparkDown} />
@@ -379,6 +384,7 @@ export function FinanceManagerDashboard() {
   return (
     <div className="page-grid">
       <Hero title="Final approval, batches and month lock" text="Finance Manager closes the period with a full audit trail." to={`/${base}/approvals`} action="Final approval queue" />
+      <WorkflowRibbon />
       <section className="kpi-grid">
         <KpiCard label="Waiting final approval" value={String(countStatus(requests, ['Submitted', 'Resubmitted', 'Under Finance Review']))} tone="amber" icon={<ClipboardList />} spark={spark} />
         <KpiCard label="Adjustments posted" value={String(items.filter((row) => row.type === 'Adjustment').length)} tone="purple" icon={<ClipboardList />} />
@@ -445,6 +451,7 @@ export function ExecutiveDashboard() {
   return (
     <div className="page-grid">
       <Hero title="Oversight without data entry" text="High-value approvals stay off until thresholds are configured." to={`/${base}/approvals`} action="Open finance queue" />
+      <WorkflowRibbon />
       <section className="kpi-grid">
         <KpiCard label="Collections this month" value={money(collected)} tone="green" icon={<CircleDollarSign />} spark={spark} />
         <KpiCard label="Total incentives" value={money(approved)} tone="blue" icon={<CircleDollarSign />} spark={spark} />

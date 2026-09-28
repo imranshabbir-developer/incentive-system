@@ -34,6 +34,7 @@ export function SalesWorkspace() {
   const [seller, setSeller] = useState('EMP-1001')
   const [closer, setCloser] = useState('EMP-1002')
   const [manager, setManager] = useState('EMP-1002')
+  const [contributor, setContributor] = useState('')
   const shownSales = sales.filter((row) =>
     (filterDept === 'All' || row.department === filterDept)
     && (filterSaleStatus === 'All' || row.status === filterSaleStatus)
@@ -55,6 +56,9 @@ export function SalesWorkspace() {
         { saleId: sale.id, employeeId: closer, name: employees.find((row) => row.id === closer)?.name ?? closer, role: 'Closer' },
         { saleId: sale.id, employeeId: manager, name: employees.find((row) => row.id === manager)?.name ?? manager, role: 'Account Manager' },
       ]
+      if (contributor) {
+        team.push({ saleId: sale.id, employeeId: contributor, name: employees.find((row) => row.id === contributor)?.name ?? contributor, role: 'Additional Contributor' })
+      }
       upsertSale({ ...sale, net: Number((sale.collected - sale.tax - sale.other).toFixed(2)) }, team, user!.name)
       setSaleOpen(false)
       setError('')
@@ -173,6 +177,7 @@ export function SalesWorkspace() {
             <Select label="Seller" value={seller} options={teamPool.map((row) => ({ value: row.id, label: `${row.name} · ${row.department}` }))} onChange={setSeller} />
             <Select label="Closer" value={closer} options={teamPool.map((row) => ({ value: row.id, label: `${row.name} · ${row.department}` }))} onChange={setCloser} />
             <Select label="Account manager" value={manager} options={teamPool.map((row) => ({ value: row.id, label: `${row.name} · ${row.department}` }))} onChange={setManager} />
+            <Select label="Additional contributor (optional)" value={contributor} options={[{ value: '', label: 'None' }, ...teamPool.map((row) => ({ value: row.id, label: `${row.name} · ${row.department}` }))]} onChange={setContributor} />
           </div>
         </Modal>
       ) : null}

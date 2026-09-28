@@ -22,21 +22,24 @@ export function EmployeesWorkspace() {
   const { employees, departments, designations, upsertEmployee } = useFims()
   const [params, setParams] = useSearchParams()
   const canWrite = user?.role === 'HR' || user?.role === 'SUPER_ADMIN'
-  const profile = employees.find((row) => row.id === params.get('id'))
+  const scopedPeople = user?.role === 'HOD' && user.departmentNames.length
+    ? employees.filter((row) => user.departmentNames.includes(row.department))
+    : employees
+  const profile = scopedPeople.find((row) => row.id === params.get('id'))
   const [form, setForm] = useState<Employee>(profile ?? blank())
   const [open, setOpen] = useState(params.get('new') === '1' || !!profile)
-  const [filterDept, setFilterDept] = useState('All')
+  const [filterDept, setFilterDept] = useState(user?.role === 'HOD' ? (user.departmentNames[0] ?? 'All') : 'All')
   const [filterStatus, setFilterStatus] = useState('All')
   const [filterEligible, setFilterEligible] = useState('All')
   const [filterHod, setFilterHod] = useState('All')
   const rows = useMemo(
-    () => employees.filter((row) =>
+    () => scopedPeople.filter((row) =>
       (filterDept === 'All' || row.department === filterDept)
       && (filterStatus === 'All' || row.status === filterStatus)
       && (filterEligible === 'All' || row.eligible === filterEligible)
       && (filterHod === 'All' || row.hod === filterHod),
     ),
-    [employees, filterDept, filterEligible, filterHod, filterStatus],
+    [filterDept, filterEligible, filterHod, filterStatus, scopedPeople],
   )
 
   function openForm(row?: Employee) {
@@ -63,12 +66,12 @@ export function EmployeesWorkspace() {
             <Select
               label="Department"
               value={filterDept}
-              options={departmentOptions(departments, { value: 'All', label: 'All departments' })}
+              options={departmentOptions(departments, user?.role === 'HOD' ? undefined : { value: 'All', label: 'All departments' }).filter((item) => user?.role !== 'HOD' || !user.departmentNames.length || user.departmentNames.includes(item.value) || item.value === 'All')}
               onChange={setFilterDept}
             />
             <Select label="Status" value={filterStatus} options={choiceOptions(EMPLOYEE_STATUSES)} onChange={setFilterStatus} />
             <Select label="Eligible" value={filterEligible} options={[ALL_OPTION, { value: 'Yes', label: 'Yes' }, { value: 'No', label: 'No' }]} onChange={setFilterEligible} />
-            <Select label="HOD" value={filterHod} options={choiceOptions(employees.map((row) => row.hod))} onChange={setFilterHod} />
+            <Select label="HOD" value={filterHod} options={choiceOptions(scopedPeople.map((row) => row.hod))} onChange={setFilterHod} />
           </div>
         }
       >

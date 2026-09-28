@@ -79,7 +79,7 @@ export function SaleRequestPage() {
           <Select
             label="Department"
             value={department}
-            options={departmentOptions(departments)}
+            options={departmentOptions(departments).filter((item) => !user?.departmentNames.length || user.departmentNames.includes(item.value))}
             onChange={(name) => {
               setDepartment(name)
               setPaymentId('')

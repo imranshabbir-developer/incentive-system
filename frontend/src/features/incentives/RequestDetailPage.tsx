@@ -16,7 +16,7 @@ const financeRoles = ['FINANCE_USER', 'FINANCE_MANAGER', 'SUPER_ADMIN']
 export function RequestDetailPage() {
   const { requestId } = useParams()
   const { user } = useAuth()
-  const { requests, items, sales, payments, employees, decide, addAdjustment } = useFims()
+  const { requests, items, sales, payments, employees, saleTeam, decide, addAdjustment } = useFims()
   const prefix = ROLE_PREFIX[user!.role]
   const request = requests.find((row) => row.id === requestId)
   const lines = items.filter((row) => row.requestId === requestId)
@@ -49,6 +49,7 @@ export function RequestDetailPage() {
     { label: 'Correct department', ok: linePeople.every((emp) => !emp || emp.department === request.department), skip: false },
     { label: 'Correct period', ok: !!request.month, skip: false },
   ]
+  const blocking = checks.filter((row) => !row.skip && !row.ok)
 
   return (
     <div className="page-grid">
@@ -77,9 +78,16 @@ export function RequestDetailPage() {
         <Card title="Verified collection">
           <div className="readonly-grid">
             <div><span>Client</span><strong>{sale.client}</strong></div>
+            <div><span>Company</span><strong>{sale.company}</strong></div>
             <div><span>Project</span><strong>{sale.project}</strong></div>
+            <div><span>Service</span><strong>{sale.service}</strong></div>
+            <div><span>Sale type</span><strong>{sale.saleType}</strong></div>
+            <div><span>Linked employees</span><strong>{saleTeam.filter((row) => row.saleId === sale.id).map((row) => `${row.name} (${row.role})`).join(', ') || '—'}</strong></div>
+            <div><span>Contract</span><strong>{money(sale.contract)}</strong></div>
             <div><span>Collection</span><strong>{money(payment.amount)}</strong></div>
+            <div><span>Tax / other</span><strong>{money(sale.tax + sale.other)}</strong></div>
             <div><span>Net collection</span><strong>{money(sale.net)}</strong></div>
+            <div><span>Payment date</span><strong>{payment.date}</strong></div>
             <div><span>Payment</span><strong>{payment.id} · {payment.status}</strong></div>
           </div>
         </Card>
@@ -109,8 +117,9 @@ export function RequestDetailPage() {
       </Card>
       {canDecide ? (
         <Card title="Finance decision">
+          {blocking.length ? <p className="delta-down">Approve is blocked until failed checks are resolved: {blocking.map((row) => row.label).join(', ')}.</p> : null}
           <div className="filter-row">
-            <Button type="button" onClick={() => decide(request.id, 'Approved', user!.name, 'Approved for payroll')}>Approve</Button>
+            <Button type="button" disabled={blocking.length > 0} onClick={() => decide(request.id, 'Approved', user!.name, 'Approved for payroll')}>Approve</Button>
             <Button type="button" variant="ghost" onClick={() => setModal('Returned')}>Return to HOD</Button>
             <Button type="button" variant="dark" onClick={() => setModal('Rejected')}>Reject</Button>
           </div>

@@ -1,6 +1,7 @@
 import { NavLink } from 'react-router-dom'
 import {
   BadgeCheck,
+  Bell,
   ClipboardCheck,
   FileBarChart,
   FolderKanban,
@@ -32,6 +33,7 @@ const icons: Record<NavKey, typeof LayoutDashboard> = {
   'extra-approvals': Shield,
   payroll: Wallet,
   reports: FileBarChart,
+  notifications: Bell,
   settings: Settings,
   audit: ScrollText,
 }
