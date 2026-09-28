@@ -130,7 +130,7 @@ export function ResourcePage({ page }: { page: PageKey }) {
         filename: 'settings.csv',
         rows: [
           { id: 'month-lock', name: 'September 2026 lock', value: 'Unlocked' },
-          { id: 'quickfill', name: 'Role quick-fill', value: import.meta.env.VITE_ENABLE_ROLE_QUICKFILL === 'true' ? 'On (demo)' : 'Off' },
+          { id: 'quickfill', name: 'Role quick-fill', value: import.meta.env.VITE_ENABLE_ROLE_QUICKFILL === 'false' ? 'Off' : 'On (demo)' },
           { id: 'card-data', name: 'Card data fields', value: 'Forbidden' },
         ],
         columns: [

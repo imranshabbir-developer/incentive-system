@@ -21,7 +21,7 @@ export function SettingsWorkspace() {
       <Card title="Period control">
         <div className="readonly-grid">
           <div><span>September 2026</span><StatusBadge value={monthLocked ? 'Locked' : 'Unlocked'} /></div>
-          <div><span>Role quick-fill</span><strong>{import.meta.env.VITE_ENABLE_ROLE_QUICKFILL === 'true' ? 'On (demo)' : 'Off'}</strong></div>
+          <div><span>Role quick-fill</span><strong>{import.meta.env.VITE_ENABLE_ROLE_QUICKFILL === 'false' ? 'Off' : 'On (demo)'}</strong></div>
           <div><span>Card data fields</span><strong>Forbidden</strong></div>
         </div>
         {canLock ? (

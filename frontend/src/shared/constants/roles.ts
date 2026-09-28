@@ -100,5 +100,5 @@ export const DEMO_PASSWORDS: Record<string, string> = {
 }
 
 export function isQuickFillEnabled() {
-  return import.meta.env.VITE_ENABLE_ROLE_QUICKFILL === 'true'
+  return import.meta.env.VITE_ENABLE_ROLE_QUICKFILL !== 'false'
 }
